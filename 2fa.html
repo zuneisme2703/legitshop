@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legitshop 2FA</title>
+    <!-- Tích hợp Tailwind CSS qua CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cấu hình Tailwind cho Dark mode và Màu chủ đạo mới -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb', // Xanh dương đậm chính
+                            700: '#1d4ed8', // Hover
+                            800: '#1e40af', // Active
+                            900: '#1e3a8a',
+                        }
+                    },
+                    animation: {
+                        blob: "blob 7s infinite",
+                    },
+                    keyframes: {
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+    <!-- Thư viện OTPAuth -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/9.2.2/otpauth.umd.min.js"></script>
+</head>
+<body class="text-gray-800 dark:text-gray-100 transition-colors duration-300 relative min-h-screen flex items-center justify-center p-4 antialiased overflow-hidden">
+
+    <!-- Nền động (Animated Background) -->
+    <div class="fixed inset-0 z-[-1] bg-blue-50 dark:bg-gray-950 transition-colors duration-500">
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-blue-300 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-50 dark:opacity-30 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-cyan-300 dark:bg-cyan-900 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-50 dark:opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-primary-400 dark:bg-primary-900 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-50 dark:opacity-30 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- Thanh công cụ góc trên -->
+    <div class="absolute top-4 right-4 flex items-center space-x-3 z-10">
+        <!-- Nút Đổi Ngôn ngữ -->
+        <button id="langToggle" class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-1.5 rounded-full text-sm font-bold shadow-sm hover:bg-white dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-700 text-primary-600 dark:text-primary-400 w-12 text-center">EN</button>
+        <!-- Nút Đổi Giao diện -->
+        <button id="themeToggle" class="p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-full shadow-sm hover:bg-white dark:hover:bg-gray-700 transition-all border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+            <!-- Icon Mặt trăng (cho Light mode) -->
+            <svg id="iconMoon" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <!-- Icon Mặt trời (cho Dark mode) -->
+            <svg id="iconSun" class="w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Thẻ Main App -->
+    <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/50 dark:border-gray-700 transition-colors duration-300">
+        <div class="flex justify-center mb-6">
+            <div class="bg-primary-100 dark:bg-primary-900/50 p-3 rounded-2xl shadow-inner transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+        </div>
+        <h1 class="text-3xl font-extrabold text-center text-gray-900 dark:text-white mb-2 tracking-tight transition-colors">Legitshop 2FA</h1>
+        <p data-i18n="desc" class="text-center text-gray-500 dark:text-gray-400 text-sm mb-6 transition-colors">Nhập mã Secret của bạn để tạo mã xác thực một lần (TOTP).</p>
+
+        <div class="space-y-5">
+            <div>
+                <label for="secret" data-i18n="secretLabel" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 transition-colors">Mã Secret (Base32)</label>
+                <input type="text" id="secret" placeholder="VD: JBSWY3DPEHPK3PXP" data-i18n-placeholder="secretPlaceholder"
+                       class="w-full px-4 py-3.5 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none uppercase font-mono transition-all text-gray-800 dark:text-gray-100 bg-gray-50 dark:bg-gray-900/50 shadow-inner"
+                       autocomplete="off" spellcheck="false">
+                <p id="errorMsg" class="mt-2 text-red-500 dark:text-red-400 text-sm hidden font-medium flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="errorText"></span>
+                </p>
+            </div>
+
+            <button id="submitBtn" 
+                    class="w-full bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition duration-300 shadow-lg shadow-primary-600/30 flex justify-center items-center group">
+                <span data-i18n="submitBtn">Lấy mã 2FA</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Kết quả hiển thị -->
+        <div id="resultContainer" class="mt-8 hidden animate-fade-in">
+            <div class="bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-200 dark:border-gray-700 p-6 text-center relative overflow-hidden transition-colors">
+                <p data-i18n="resultLabel" class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4 transition-colors">Mã xác thực của bạn:</p>
+                
+                <div class="flex items-center justify-center gap-3">
+                    <!-- Bấm vào chữ để copy -->
+                    <div class="group relative inline-block cursor-pointer bg-white dark:bg-gray-800 py-2 px-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 transition-all" id="copyBtnText">
+                        <p id="totpCode" class="text-4xl sm:text-5xl font-mono font-bold text-gray-800 dark:text-white tracking-widest transition-colors duration-300">------</p>
+                        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs py-1.5 px-2.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg" data-i18n="copyTooltip">
+                            Nhấn để copy
+                        </div>
+                    </div>
+                    
+                    <!-- Nút icon Copy riêng biệt -->
+                    <button id="copyBtnIcon" class="p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all shadow-sm active:scale-95 group relative" title="Copy">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-700 text-white text-xs py-1.5 px-2.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
+                            Copy
+                        </div>
+                    </button>
+                </div>
+                
+                <div class="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-600 dark:text-gray-400 font-medium transition-colors">
+                    <svg id="spinner" class="w-4 h-4 animate-spin text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span><span data-i18n="refreshText">Làm mới sau:</span> <span id="timer" class="font-bold text-primary-600 dark:text-primary-400 w-5 inline-block text-left transition-colors">30</span>s</span>
+                </div>
+                
+                <!-- Thanh đếm ngược thời gian -->
+                <div class="absolute bottom-0 left-0 h-1.5 bg-gray-200 dark:bg-gray-700 w-full transition-colors">
+                    <div id="progressBar" class="h-full bg-primary-500 transition-all duration-1000 ease-linear origin-left" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <!-- Nút nhập lại Secret -->
+            <button id="resetBtn" data-i18n="resetBtn" class="mt-4 w-full text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white text-sm font-medium py-2 transition-colors">
+                Nhập mã Secret khác
+            </button>
+        </div>
+    </div>
+
+    <!-- Thông báo copy thành công (Toast) -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-3 rounded-xl shadow-2xl text-sm font-bold transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center space-x-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400 dark:text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span data-i18n="toastSuccess">Đã copy mã!</span>
+    </div>
+
+    <script>
+        // --- CẤU HÌNH NGÔN NGỮ (i18n) ---
+        const translations = {
+            vi: {
+                desc: "Nhập mã Secret của bạn để tạo mã xác thực một lần (TOTP).",
+                secretLabel: "Mã Secret (Base32)",
+                secretPlaceholder: "VD: JBSWY3DPEHPK3PXP",
+                submitBtn: "Lấy mã 2FA",
+                resultLabel: "Mã xác thực của bạn:",
+                copyTooltip: "Nhấn để copy",
+                refreshText: "Làm mới sau:",
+                resetBtn: "Nhập mã Secret khác",
+                toastSuccess: "Đã copy mã thành công!",
+                errEmpty: "Vui lòng nhập mã Secret Key!",
+                errInvalid: "Mã Secret không hợp lệ (không phải chuẩn Base32).",
+                errGen: "Lỗi tạo mã. Vui lòng kiểm tra lại Secret Key.",
+                langNext: "EN"
+            },
+            en: {
+                desc: "Enter your Secret to generate a one-time password (TOTP).",
+                secretLabel: "Secret Key (Base32)",
+                secretPlaceholder: "Ex: JBSWY3DPEHPK3PXP",
+                submitBtn: "Get 2FA Code",
+                resultLabel: "Your Authentication Code:",
+                copyTooltip: "Click to copy",
+                refreshText: "Refresh in:",
+                resetBtn: "Enter another Secret",
+                toastSuccess: "Code copied successfully!",
+                errEmpty: "Please enter a Secret Key!",
+                errInvalid: "Invalid Secret Key (must be standard Base32).",
+                errGen: "Error generating code. Check your Secret Key.",
+                langNext: "VI"
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'vi';
+        let currentErrorKey = null;
+
+        function applyLanguage(lang) {
+            const t = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) el.placeholder = t[key];
+            });
+            document.getElementById('langToggle').innerText = t.langNext;
+            
+            // Cập nhật lỗi nếu đang hiển thị
+            if (currentErrorKey) {
+                document.getElementById('errorText').innerText = t[currentErrorKey];
+            }
+        }
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'vi' ? 'en' : 'vi';
+            localStorage.setItem('lang', currentLang);
+            applyLanguage(currentLang);
+        });
+
+        // --- CẤU HÌNH DARK/LIGHT MODE ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const iconMoon = document.getElementById('iconMoon');
+        const iconSun = document.getElementById('iconSun');
+
+        // Kiểm tra preference đã lưu hoặc theo hệ thống
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            iconMoon.classList.add('hidden');
+            iconSun.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                iconMoon.classList.add('hidden');
+                iconSun.classList.remove('hidden');
+            } else {
+                localStorage.setItem('theme', 'light');
+                iconMoon.classList.remove('hidden');
+                iconSun.classList.add('hidden');
+            }
+        });
+
+        // --- LOGIC 2FA CHÍNH ---
+        let currentTotp = null;
+        let updateInterval = null;
+        let currentRawToken = ""; 
+
+        const secretInput = document.getElementById('secret');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const totpCodeDisplay = document.getElementById('totpCode');
+        const timerDisplay = document.getElementById('timer');
+        const progressBar = document.getElementById('progressBar');
+        const errorMsg = document.getElementById('errorMsg');
+        const errorText = document.getElementById('errorText');
+        const spinner = document.getElementById('spinner');
+
+        function updateCodeAndTimer() {
+            if (!currentTotp) return;
+
+            try {
+                const token = currentTotp.generate();
+                currentRawToken = token;
+                
+                totpCodeDisplay.innerText = token.slice(0, 3) + ' ' + token.slice(3);
+                
+                const epoch = Math.floor(Date.now() / 1000);
+                const remaining = 30 - (epoch % 30);
+                
+                timerDisplay.innerText = remaining;
+                const progressPercentage = (remaining / 30) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                
+                if (remaining <= 5) {
+                    totpCodeDisplay.classList.add('text-red-600', 'dark:text-red-400');
+                    totpCodeDisplay.classList.remove('text-gray-800', 'dark:text-white');
+                    progressBar.classList.add('bg-red-500');
+                    progressBar.classList.remove('bg-primary-500');
+                    timerDisplay.classList.add('text-red-600', 'dark:text-red-400');
+                    timerDisplay.classList.remove('text-primary-600', 'dark:text-primary-400');
+                    spinner.classList.add('text-red-500');
+                    spinner.classList.remove('text-primary-500');
+                } else {
+                    totpCodeDisplay.classList.remove('text-red-600', 'dark:text-red-400');
+                    totpCodeDisplay.classList.add('text-gray-800', 'dark:text-white');
+                    progressBar.classList.remove('bg-red-500');
+                    progressBar.classList.add('bg-primary-500');
+                    timerDisplay.classList.remove('text-red-600', 'dark:text-red-400');
+                    timerDisplay.classList.add('text-primary-600', 'dark:text-primary-400');
+                    spinner.classList.remove('text-red-500');
+                    spinner.classList.add('text-primary-500');
+                }
+            } catch (error) {
+                showError('errGen');
+                stopUpdater();
+            }
+        }
+
+        function startUpdater() {
+            if (updateInterval) clearInterval(updateInterval);
+            updateCodeAndTimer(); 
+            updateInterval = setInterval(updateCodeAndTimer, 1000); 
+        }
+
+        function stopUpdater() {
+            if (updateInterval) clearInterval(updateInterval);
+            resultContainer.classList.add('hidden');
+        }
+
+        function showError(errorKey) {
+            currentErrorKey = errorKey;
+            errorText.innerText = translations[currentLang][errorKey];
+            errorMsg.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+        }
+
+        function hideError() {
+            currentErrorKey = null;
+            errorMsg.classList.add('hidden');
+        }
+
+        submitBtn.addEventListener('click', () => {
+            hideError();
+            let secretValue = secretInput.value.replace(/\s+/g, '').toUpperCase(); 
+
+            if (!secretValue) {
+                showError('errEmpty');
+                return;
+            }
+
+            try {
+                currentTotp = new OTPAuth.TOTP({
+                    issuer: "Legitshop",
+                    label: "2FA",
+                    algorithm: "SHA1",
+                    digits: 6,
+                    period: 30,
+                    secret: secretValue
+                });
+                
+                currentTotp.generate(); // Test validate Base32
+
+                submitBtn.parentElement.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+                startUpdater();
+
+            } catch (err) {
+                showError('errInvalid');
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            stopUpdater();
+            secretInput.value = '';
+            submitBtn.parentElement.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            secretInput.focus();
+        });
+
+        secretInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') submitBtn.click();
+        });
+
+        // --- TÍNH NĂNG COPY ---
+        function executeCopy() {
+            if (!currentRawToken) return;
+            const tempInput = document.createElement('input');
+            tempInput.value = currentRawToken;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2500);
+        }
+
+        // Bấm vào Text cũng copy được, bấm vào Icon bên cạnh cũng copy được
+        document.getElementById('copyBtnText').addEventListener('click', executeCopy);
+        document.getElementById('copyBtnIcon').addEventListener('click', executeCopy);
+
+        // Khởi tạo ngôn ngữ ban đầu
+        applyLanguage(currentLang);
+    </script>
+</body>
+</html>
