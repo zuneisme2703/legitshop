@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Giá Antigravity - Legit Shop</title>
+    <link rel="icon" href="legit.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        svg text { pointer-events: none; }
+    </style>
+</head>
+<body class="transition-colors duration-300 overflow-x-hidden">
+    
+    <!-- Nền mạng động (Dynamic Network Background) -->
+    <div id="bg-container" class="fixed inset-0 z-[-1] bg-slate-50 dark:bg-gradient-to-br dark:from-blue-950 dark:via-blue-900 dark:to-indigo-950 transition-colors duration-700">
+        <canvas id="network-canvas" class="w-full h-full"></canvas>
+    </div>
+
+    <!-- Màn hình chờ (Preloader) -->
+    <div id="preloader" class="fixed inset-0 z-[9999] bg-white dark:bg-blue-950 flex flex-col items-center justify-center transition-opacity duration-700 ease-in-out pointer-events-auto">
+        <div class="relative flex items-center justify-center w-28 h-28 mb-6">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-100 dark:border-blue-900/50"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-blue-600 dark:border-blue-400 border-t-transparent animate-spin"></div>
+            <img src="legit.png" alt="Legit Shop" class="w-16 h-16 object-cover z-10 rounded-xl" onerror="this.onerror=null; this.outerHTML='<svg class=\\\'w-12 h-12 text-blue-600 dark:text-blue-400 z-10\\\' fill=\\\'none\\\' stroke=\\\'currentColor\\\' viewBox=\\\'0 0 24 24\\\'><path stroke-linecap=\\\'round\\\' stroke-linejoin=\\\'round\\\' stroke-width=\\\'2\\\' d=\\\'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z\\\'></path></svg>'" />
+        </div>
+        <h2 class="text-slate-800 dark:text-white font-bold text-xl tracking-[0.15em] uppercase mb-2">Legit Shop</h2>
+        <p class="text-blue-600 dark:text-blue-400 text-sm font-medium animate-pulse">Đang tải bảng giá...</p>
+    </div>
+
+    <!-- Ứng dụng sẽ được render vào đây -->
+    <div id="root"></div>
+
+    <script>
+        // --- XỬ LÝ PRELOADER ---
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.classList.add('opacity-0');
+                preloader.classList.remove('pointer-events-auto');
+                preloader.classList.add('pointer-events-none');
+                setTimeout(() => { preloader.style.display = 'none'; }, 700);
+            }, 500);
+        });
+
+        // --- DATA & TRANSLATIONS ---
+        const translations = {
+            vi: {
+                lang: "VI",
+                flag: "🇻🇳",
+                tool2fa: "Công Cụ 2FA",
+                zaloGroup: "Cộng Đồng Zalo",
+                zaloContact: "Liên Hệ Zalo",
+                fbContact: "Facebook",
+                footerDesc: "Legit Shop - Nơi cung cấp giải pháp số đáng tin cậy và uy tín nhất của bạn.",
+                contact: "Thông Tin Liên Hệ",
+                phone: "0816 522 665 (Đức Dũng)",
+                email: "zun.is.michael@gmail.com",
+                rights: "Bản quyền thuộc về Legit Shop.",
+                buyNow: "Mua Ngay",
+                pricing: {
+                    title: "Bảng giá các gói Antigravity ngày",
+                    subTitle: "Tối đa hóa hiệu suất làm việc. Lưu ý: Tất cả các gói đều được nâng cấp chính chủ.",
+                    viewTable: "Dạng Bảng",
+                    viewCard: "Dạng Thẻ",
+                    tableTitle: "Các Gói Antigravity",
+                    // DỮ LIỆU DẠNG BẢNG
+                    headers: ["Gói dịch vụ", "Mô tả chi tiết", "Thời hạn", "Giá tiền"],
+                    tableData: [
+                        { name: "Antigravity Pro 3 Tháng", desc: "Nâng cấp chính chủ. (Ghi chú: Đã có sẵn nếu bạn mua gói <a href='geminipro.html' class='underline font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>Gemini Pro</a>)", duration: "3 tháng", price: "180.000đ" },
+                        { name: "Antigravity Pro 6 Tháng", desc: "Nâng cấp chính chủ. (Ghi chú: Đã có sẵn nếu bạn mua gói <a href='geminipro.html' class='underline font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>Gemini Pro</a>)", duration: "6 tháng", price: "300.000đ" },
+                        { name: "Antigravity Pro 1 Năm", desc: "Nâng cấp chính chủ. (Ghi chú: Đã có sẵn nếu bạn mua gói <a href='geminipro.html' class='underline font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>Gemini Pro</a>)", duration: "1 năm", price: "450.000đ" },
+                        { name: "Antigravity Ultra 1 Tháng", desc: "Nâng cấp chính chủ. Mở khóa toàn bộ sức mạnh của gói Ultra cao cấp nhất.", duration: "1 tháng", price: "400.000đ" },
+                        { name: "Antigravity Ultra 1 Năm", desc: "Nâng cấp chính chủ. Mở khóa toàn bộ sức mạnh của gói Ultra cao cấp nhất trọn vẹn 1 năm.", duration: "1 năm", price: "2.800.000đ" }
+                    ],
+                    // DỮ LIỆU DẠNG CARD TƯƠNG TÁC
+                    packages: [
+                        {
+                            id: "anti_pro",
+                            name: "Antigravity Pro",
+                            desc: "Nâng cấp chính chủ trên tài khoản của bạn.<br/><span class='text-emerald-600 dark:text-emerald-400 font-medium mt-1.5 inline-block'>Ghi chú: Gói này đã được tích hợp sẵn nếu bạn mua gói <a href='geminipro.html' class='underline font-bold hover:text-emerald-800 dark:hover:text-emerald-200 transition-colors'>Gemini Pro</a>.</span>",
+                            options: [
+                                { id: "3m", label: "3 tháng", price: "180.000đ" },
+                                { id: "6m", label: "6 tháng", price: "300.000đ" },
+                                { id: "12m", label: "1 năm", price: "450.000đ" }
+                            ]
+                        },
+                        {
+                            id: "anti_ultra",
+                            name: "Antigravity Ultra",
+                            desc: "Nâng cấp chính chủ trên tài khoản của bạn. Tận hưởng toàn bộ sức mạnh và tính năng không giới hạn của phiên bản Ultra cao cấp nhất.",
+                            options: [
+                                { id: "1m", label: "1 tháng", price: "400.000đ" },
+                                { id: "12m", label: "1 năm", price: "2.800.000đ" }
+                            ]
+                        }
+                    ]
+                }
+            },
+            en: {
+                lang: "EN",
+                flag: "🇬🇧",
+                tool2fa: "2FA Tool",
+                zaloGroup: "Zalo Community",
+                zaloContact: "Contact Zalo",
+                fbContact: "Facebook",
+                footerDesc: "Legit Shop - Your most reliable and trusted digital solutions provider.",
+                contact: "Contact Info",
+                phone: "0816 522 665 (Duc Dung)",
+                email: "zun.is.michael@gmail.com",
+                rights: "All rights reserved by Legit Shop.",
+                buyNow: "Buy Now",
+                pricing: {
+                    title: "Antigravity Pricing as of",
+                    subTitle: "Boost your productivity. Note: All packages are officially upgraded on your own account.",
+                    viewTable: "Table View",
+                    viewCard: "Card View",
+                    tableTitle: "Antigravity Packages",
+                    // TABLE DATA
+                    headers: ["Package", "Description", "Duration", "Price"],
+                    tableData: [
+                        { name: "Antigravity Pro 3 Months", desc: "Official upgrade. (Note: Included if you purchased <a href='geminipro.html' class='underline font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>Gemini Pro</a>)", duration: "3 months", price: "180,000 VND" },
+                        { name: "Antigravity Pro 6 Months", desc: "Official upgrade. (Note: Included if you purchased <a href='geminipro.html' class='underline font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>Gemini Pro</a>)", duration: "6 months", price: "300,000 VND" },
+                        { name: "Antigravity Pro 1 Year", desc: "Official upgrade. (Note: Included if you purchased <a href='geminipro.html' class='underline font-bold hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>Gemini Pro</a>)", duration: "1 year", price: "450,000 VND" },
+                        { name: "Antigravity Ultra 1 Month", desc: "Official upgrade to the highest Ultra tier.", duration: "1 month", price: "400,000 VND" },
+                        { name: "Antigravity Ultra 1 Year", desc: "Official upgrade to the highest Ultra tier for a full year.", duration: "1 year", price: "2,800,000 VND" }
+                    ],
+                    // CARD DATA
+                    packages: [
+                        {
+                            id: "anti_pro",
+                            name: "Antigravity Pro",
+                            desc: "Officially upgraded on your own account.<br/><span class='text-emerald-600 dark:text-emerald-400 font-medium mt-1.5 inline-block'>Note: This is already included if you purchased the <a href='geminipro.html' class='underline font-bold hover:text-emerald-800 dark:hover:text-emerald-200 transition-colors'>Gemini Pro</a> package.</span>",
+                            options: [
+                                { id: "3m", label: "3 months", price: "180,000 VND" },
+                                { id: "6m", label: "6 months", price: "300,000 VND" },
+                                { id: "12m", label: "1 year", price: "450,000 VND" }
+                            ]
+                        },
+                        {
+                            id: "anti_ultra",
+                            name: "Antigravity Ultra",
+                            desc: "Officially upgraded on your own account. Enjoy the full power and unlimited features of the highest Ultra version.",
+                            options: [
+                                { id: "1m", label: "1 month", price: "400,000 VND" },
+                                { id: "12m", label: "1 year", price: "2,800,000 VND" }
+                            ]
+                        }
+                    ]
+                }
+            }
+        };
+
+        const zaloSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /><text x="12" y="13" text-anchor="middle" font-size="6" font-weight="bold" fill="currentColor" stroke="none">Zalo</text></svg>`;
+
+        // --- STATE ---
+        let lang = 'vi';
+        let isDark = false;
+        let isMenuOpen = false;
+        let viewMode = 'card'; // 'card' hoặc 'table'
+        let packageSelections = {};
+
+        // --- ACTIONS ---
+        function toggleLang() { lang = lang === 'vi' ? 'en' : 'vi'; render(); }
+        function toggleTheme() {
+            isDark = !isDark;
+            isDark ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark');
+            render();
+        }
+        function toggleMenu() { isMenuOpen = !isMenuOpen; render(); }
+        function setViewMode(mode) { viewMode = mode; render(); }
+        function selectOption(pkgId, optionId) { packageSelections[pkgId] = optionId; render(); }
+
+        // --- RENDER FUNCTION ---
+        function render() {
+            const t = translations[lang];
+            const pData = t.pricing;
+            const root = document.getElementById('root');
+            
+            const dateObj = new Date();
+            const dateStr = dateObj.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            const headerLinksList = `
+                <a href="https://2fa.legitshop.io.vn" target="_blank" rel="noreferrer" class="flex items-center gap-1.5 hover:text-blue-300 transition-colors font-medium">
+                    <i data-lucide="shield" class="w-[18px] h-[18px]"></i> ${t.tool2fa}
+                </a>
+                <a href="https://zalo.me/g/kouxlv179" target="_blank" rel="noreferrer" class="flex items-center gap-1.5 hover:text-blue-300 transition-colors font-medium">
+                    ${zaloSvg} ${t.zaloGroup}
+                </a>
+                <a href="https://zalo.me/0816522665" target="_blank" rel="noreferrer" class="flex items-center gap-1.5 hover:text-blue-300 transition-colors font-medium">
+                    ${zaloSvg} ${t.zaloContact}
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61581503402796" target="_blank" rel="noreferrer" class="flex items-center gap-1.5 hover:text-blue-300 transition-colors font-medium">
+                    <i data-lucide="facebook" class="w-[18px] h-[18px]"></i> ${t.fbContact}
+                </a>
+            `;
+
+            // ===== HTML: NÚT CHUYỂN ĐỔI VIEW (TOGGLE) =====
+            const viewToggleHtml = `
+                <div class="flex justify-center mb-12">
+                    <div class="bg-gray-200/60 dark:bg-slate-800/60 backdrop-blur-md p-1.5 rounded-full flex gap-1 border border-gray-300/50 dark:border-slate-700/50 shadow-inner">
+                        <button onclick="setViewMode('card')" 
+                                class="${viewMode === 'card' ? 'bg-white dark:bg-slate-700 shadow-md text-blue-700 dark:text-blue-400 font-bold' : 'text-gray-600 dark:text-gray-400 hover:bg-white/40 dark:hover:bg-slate-700/40 font-medium'} 
+                                       px-8 py-2.5 rounded-full text-sm transition-all duration-300 flex items-center gap-2">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i> ${pData.viewCard}
+                        </button>
+                        <button onclick="setViewMode('table')" 
+                                class="${viewMode === 'table' ? 'bg-white dark:bg-slate-700 shadow-md text-blue-700 dark:text-blue-400 font-bold' : 'text-gray-600 dark:text-gray-400 hover:bg-white/40 dark:hover:bg-slate-700/40 font-medium'} 
+                                       px-8 py-2.5 rounded-full text-sm transition-all duration-300 flex items-center gap-2">
+                            <i data-lucide="table" class="w-4 h-4"></i> ${pData.viewTable}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // ===== HTML: DẠNG CARD (Tinh tế & Sang trọng) =====
+            const cardsHtml = pData.packages.map(pkg => {
+                const selectedOptionId = packageSelections[pkg.id] || pkg.options[0].id;
+                const selectedOption = pkg.options.find(o => o.id === selectedOptionId);
+
+                // Nút chọn Option dạng Segmented Control
+                const optionsHtml = pkg.options.map(opt => {
+                    const isSelected = opt.id === selectedOptionId;
+                    const btnClass = isSelected
+                        ? "bg-white dark:bg-slate-700 shadow text-blue-700 dark:text-blue-400 font-bold"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50 font-medium";
+
+                    const labelHtml = opt.subLabel
+                        ? `<span>${opt.label}</span><span class="block text-[10px] font-normal opacity-70 mt-0.5">${opt.subLabel}</span>`
+                        : `<span>${opt.label}</span>`;
+
+                    return `
+                        <button onclick="selectOption('${pkg.id}', '${opt.id}')"
+                                class="flex-1 py-3 px-1 rounded-xl transition-all duration-300 text-sm leading-tight ${btnClass}">
+                            ${labelHtml}
+                        </button>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="relative bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/60 dark:border-slate-700/50 p-7 sm:p-10 flex flex-col h-full hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 overflow-hidden group">
+                        <!-- Decorative Blob -->
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-indigo-500/10 dark:from-blue-400/5 dark:to-indigo-500/5 rounded-bl-full -z-10 transition-transform duration-700 group-hover:scale-125"></div>
+                        
+                        <div class="flex items-center gap-3 mb-4">
+                            <i data-lucide="zap" class="text-blue-500 dark:text-blue-400 w-8 h-8"></i>
+                            <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-blue-300 dark:to-indigo-300 tracking-tight">${pkg.name}</h3>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300/90 text-[15px] mb-8 leading-relaxed flex-grow">${pkg.desc}</p>
+                        
+                        <div class="mt-auto space-y-8">
+                            <!-- Segmented Control Container -->
+                            <div class="bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-2xl flex gap-1 border border-slate-200/50 dark:border-slate-800/50">
+                                ${optionsHtml}
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-1.5"><i data-lucide="tag" class="w-4 h-4"></i> Giá ưu đãi</span>
+                                    <span class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">${selectedOption.price}</span>
+                                </div>
+                                
+                                <a href="https://zalo.me/0816522665" target="_blank" rel="noreferrer"
+                                   class="w-full flex justify-center items-center gap-2 bg-slate-900 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-blue-500/30 transform active:scale-[0.98]">
+                                    ${zaloSvg} ${t.buyNow}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // ===== HTML: DẠNG BẢNG =====
+            const tableRowsHtml = pData.tableData.map(pkg => `
+                <tr class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-blue-50/50 dark:hover:bg-blue-900/30 transition-colors group">
+                    <td class="px-5 py-5 font-bold text-blue-800 dark:text-blue-300 align-middle min-w-[200px] text-lg">${pkg.name}</td>
+                    <td class="px-5 py-5 text-gray-700 dark:text-gray-300 align-middle leading-relaxed min-w-[250px]">${pkg.desc}</td>
+                    <td class="px-5 py-5 text-center font-semibold text-gray-800 dark:text-gray-200 align-middle whitespace-nowrap text-lg">${pkg.duration}</td>
+                    <td class="px-5 py-5 text-center font-black text-blue-600 dark:text-blue-400 align-middle whitespace-nowrap text-xl bg-blue-50/30 dark:bg-blue-900/10">${pkg.price}</td>
+                </tr>
+            `).join('');
+
+            const tableLayoutHtml = `
+                <div class="bg-white/95 dark:bg-gray-800/85 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden mb-12 border border-gray-100 dark:border-gray-700/50">
+                    <div class="bg-blue-800 dark:bg-blue-900 px-6 py-5 border-b border-blue-900/50 dark:border-blue-950">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="zap" class="text-blue-300 w-6 h-6"></i>
+                            <h2 class="text-xl font-extrabold text-white uppercase tracking-wider">${pData.tableTitle}</h2>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="bg-blue-50/50 dark:bg-gray-900/50 text-blue-900 dark:text-blue-200 border-b-2 border-blue-100 dark:border-gray-700">
+                                    ${pData.headers.map((h, index) => `<th class="px-5 py-4 font-bold uppercase text-sm tracking-wide ${index >= 2 ? 'text-center' : ''}">${h}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>${tableRowsHtml}</tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12 pb-10">
+                    <a href="https://zalo.me/0816522665" target="_blank" rel="noreferrer" class="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-lg py-4 px-12 rounded-full transition-all transform hover:scale-105 shadow-xl dark:shadow-blue-900/30">
+                        ${zaloSvg} ${t.buyNow}
+                    </a>
+                </div>
+            `;
+
+            // ===== KẾT XUẤT DOM =====
+            root.innerHTML = `
+                <div class="min-h-screen text-slate-900 dark:text-white font-sans transition-colors duration-300 flex flex-col">
+                    
+                    <!-- Navigation -->
+                    <nav class="sticky top-0 z-50 bg-blue-900 dark:bg-black/40 dark:backdrop-blur-xl text-white shadow-lg border-b border-blue-800/50 dark:border-white/10">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="flex justify-between items-center h-20">
+                                <!-- Logo -->
+                                <a href="index.html" class="flex-shrink-0 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity">
+                                    <img src="legit.png" alt="Legit Shop Logo" class="w-10 h-10 object-cover bg-white rounded-xl shadow-inner p-0.5" onerror="this.onerror=null; this.outerHTML='<i data-lucide=\\\'shield\\\' class=\\\'text-blue-400 w-8 h-8\\\'></i>'" />
+                                    <span class="font-bold text-2xl tracking-tight">Legit Shop</span>
+                                </a>
+
+                                <!-- Desktop Menu -->
+                                <div class="hidden lg:flex items-center space-x-8">
+                                    ${headerLinksList}
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="hidden lg:flex items-center space-x-4">
+                                    <button onclick="toggleLang()" class="flex items-center gap-2 bg-blue-800 dark:bg-blue-900/50 hover:bg-blue-700 dark:hover:bg-blue-800 px-3 py-1.5 rounded-full transition-all border border-blue-700 dark:border-blue-700/50">
+                                        <span class="text-lg leading-none">${t.flag}</span>
+                                        <span class="font-bold text-sm">${t.lang}</span>
+                                    </button>
+                                    <button onclick="toggleTheme()" class="p-2 rounded-full bg-blue-800 dark:bg-blue-900/50 hover:bg-blue-700 dark:hover:bg-blue-800 transition-all border border-blue-700 dark:border-blue-700/50">
+                                        ${isDark ? '<i data-lucide="sun" class="w-5 h-5"></i>' : '<i data-lucide="moon" class="w-5 h-5"></i>'}
+                                    </button>
+                                </div>
+
+                                <!-- Mobile menu button -->
+                                <div class="lg:hidden flex items-center gap-4">
+                                    <button onclick="toggleLang()" class="flex items-center gap-1 bg-blue-800 dark:bg-blue-900/50 px-2 py-1 rounded-full text-sm">
+                                        <span>${t.flag}</span> ${t.lang}
+                                    </button>
+                                    <button onclick="toggleTheme()" class="p-1.5 bg-blue-800 dark:bg-blue-900/50 rounded-full">
+                                        ${isDark ? '<i data-lucide="sun" class="w-[18px] h-[18px]"></i>' : '<i data-lucide="moon" class="w-[18px] h-[18px]"></i>'}
+                                    </button>
+                                    <button onclick="toggleMenu()" class="text-white hover:text-blue-300">
+                                        ${isMenuOpen ? '<i data-lucide="x" class="w-7 h-7"></i>' : '<i data-lucide="menu" class="w-7 h-7"></i>'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Menu Panel -->
+                        ${isMenuOpen ? `
+                            <div class="lg:hidden bg-blue-950 dark:bg-blue-900/80 dark:backdrop-blur-xl px-4 pt-2 pb-4 space-y-3 border-t border-blue-800 dark:border-white/10">
+                                <div class="flex flex-col space-y-4 pt-2">
+                                    ${headerLinksList}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </nav>
+
+                    <!-- Main Pricing Content -->
+                    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
+                        <div class="text-center mb-10">
+                            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-blue-950 dark:text-white mb-4 drop-shadow-sm leading-tight">
+                                ${pData.title} <span class="text-blue-600 dark:text-blue-400 border-b-4 border-blue-500 rounded-sm inline-block mt-2 sm:mt-0 pb-1">${dateStr}</span>
+                            </h1>
+                            <p class="mt-4 text-lg text-emerald-600 dark:text-emerald-400 max-w-2xl mx-auto font-bold tracking-wide">
+                                ${pData.subTitle}
+                            </p>
+                        </div>
+
+                        ${viewToggleHtml}
+
+                        <!-- Content Render based on viewMode -->
+                        ${viewMode === 'card' 
+                            ? `<div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">${cardsHtml}</div>`
+                            : tableLayoutHtml
+                        }
+
+                    </main>
+
+                    <!-- Footer -->
+                    <footer class="mt-auto bg-blue-950 dark:bg-blue-950/40 dark:backdrop-blur-md text-blue-200 border-t border-blue-900/50 dark:border-white/10 pt-16 pb-8">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                                <div>
+                                    <div class="flex items-center gap-3 mb-6">
+                                        <img src="legit.png" alt="Legit Shop Logo" class="w-10 h-10 object-cover bg-white rounded-xl shadow-sm p-0.5" onerror="this.onerror=null; this.outerHTML='<i data-lucide=\\\'shield\\\' class=\\\'text-blue-400 w-8 h-8\\\'></i>'" />
+                                        <span class="font-bold text-2xl text-white tracking-tight">Legit Shop</span>
+                                    </div>
+                                    <p class="text-blue-300/80 leading-relaxed max-w-sm">
+                                        ${t.footerDesc}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold text-lg mb-6">${t.contact}</h4>
+                                    <ul class="space-y-4">
+                                        <li class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400">
+                                                ${zaloSvg}
+                                            </div>
+                                            <div>
+                                                <div class="text-xs text-blue-400/80 uppercase tracking-wider mb-1">Zalo / Hotline</div>
+                                                <a href="https://zalo.me/0816522665" target="_blank" rel="noreferrer" class="text-white font-medium hover:text-blue-300 transition-colors">
+                                                    ${t.phone}
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li class="flex items-center gap-3 mt-4">
+                                            <div class="w-10 h-10 rounded-full bg-blue-900/50 flex items-center justify-center text-blue-400">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs text-blue-400/80 uppercase tracking-wider mb-1">Email</div>
+                                                <a href="mailto:${t.email}" class="text-white font-medium hover:text-blue-300 transition-colors">
+                                                    ${t.email}
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="pt-8 border-t border-blue-900/50 text-center text-sm text-blue-400/60 flex flex-col md:flex-row justify-between items-center gap-4">
+                                <p>&copy; ${new Date().getFullYear()} Legit Shop. ${t.rights}</p>
+                                <div class="flex gap-4">
+                                    <a href="https://www.facebook.com/profile.php?id=61581503402796" target="_blank" rel="noreferrer" class="hover:text-white transition-colors">
+                                        <i data-lucide="facebook" class="w-5 h-5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+
+        render();
+
+        // --- HIỆU ỨNG MẠNG LƯỚI ĐỘNG (PARTICLE NETWORK) ---
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+        
+        const connectDistance = 150; 
+        const mouseConnectDistance = 180; 
+        
+        let mouse = { x: null, y: null }
+        
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+        window.addEventListener('mouseout', function() {
+            mouse.x = null;
+            mouse.y = null;
+        });
+        
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particlesArray = [];
+            let numberOfParticles = (canvas.width * canvas.height) / 12000;
+            if (numberOfParticles > 80) numberOfParticles = 80; 
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = Math.random() * 2 + 1;
+                let x = Math.random() * (canvas.width - size * 2) + size * 2;
+                let y = Math.random() * (canvas.height - size * 2) + size * 2;
+                let directionX = (Math.random() - 0.5) * 1.5;
+                let directionY = (Math.random() - 0.5) * 1.5;
+                particlesArray.push(new Particle(x, y, directionX, directionY, size));
+            }
+        }
+        
+        class Particle {
+            constructor(x, y, directionX, directionY, size) {
+                this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = isDark ? 'rgba(96, 165, 250, 0.6)' : 'rgba(30, 64, 175, 0.4)'; 
+                ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                this.x += this.directionX; this.y += this.directionY;
+                this.draw();
+            }
+        }
+        
+        function animateNetwork() {
+            requestAnimationFrame(animateNetwork);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); }
+            connect();
+        }
+        
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
+                                   ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (connectDistance * connectDistance)) {
+                        opacityValue = 1 - (distance / (connectDistance * connectDistance));
+                        ctx.strokeStyle = isDark ? `rgba(96, 165, 250, ${opacityValue * 0.4})` : `rgba(30, 64, 175, ${opacityValue * 0.3})`;
+                        ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
+                    }
+                }
+                if (mouse.x != null) {
+                    let distanceToMouse = ((particlesArray[a].x - mouse.x) * (particlesArray[a].x - mouse.x)) + 
+                                          ((particlesArray[a].y - mouse.y) * (particlesArray[a].y - mouse.y));
+                    if (distanceToMouse < (mouseConnectDistance * mouseConnectDistance)) {
+                        opacityValue = 1 - (distanceToMouse / (mouseConnectDistance * mouseConnectDistance));
+                        ctx.strokeStyle = isDark ? `rgba(147, 197, 253, ${opacityValue * 0.7})` : `rgba(30, 58, 138, ${opacityValue * 0.5})`;
+                        ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        window.addEventListener('resize', initCanvas);
+        initCanvas(); animateNetwork();
+    </script>
+</body>
+</html>
