@@ -79,27 +79,76 @@
                 buyNow: "Mua Ngay",
                 pricing: {
                     title: "Bảng giá các gói SuperGrok ngày",
-                    subTitle: "Trợ lý AI phân tích dữ liệu thời gian thực với sức mạnh vượt trội từ xAI.",
+                    subTitle: "Trợ lý AI phân tích dữ liệu thời gian thực siêu tốc từ xAI (tích hợp trên X/Twitter).",
                     viewTable: "Dạng Bảng",
                     viewCard: "Dạng Thẻ",
-                    tableTitle: "Các Gói SuperGrok",
+                    shortTermTitle: "Gói Dùng Ngắn Hạn",
+                    longTermTitle: "Gói Dùng Dài Hạn",
+                    headers: ["Gói dịch vụ", "Mô tả chi tiết", "Thời hạn", "Giá tiền"],
                     // DỮ LIỆU DẠNG BẢNG
-                    headers: ["Gói dịch vụ", "Chi tiết bảo hành", "Thời hạn", "Giá tiền"],
-                    tableData: [
-                        { name: "SuperGrok 1 Tháng", desc: "Trải nghiệm đầy đủ tính năng của SuperGrok trong 1 tháng.", duration: "1 tháng", price: "330.000đ" },
-                        { name: "SuperGrok 1 Năm (Bảo hành 6T)", desc: "Sử dụng 1 năm, hỗ trợ bảo hành tài khoản trong 6 tháng đầu.", duration: "1 năm", price: "2.400.000đ" },
-                        { name: "SuperGrok 1 Năm (Bảo hành Full)", desc: "Sử dụng 1 năm, chế độ bảo hành toàn thời gian 100%.", duration: "1 năm", price: "3.000.000đ" }
+                    shortTableData: [
+                        { name: "SuperGrok Tài Khoản Cấp", desc: "Tài khoản do shop cấp. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Có thể đổi thông tin sang email chính chủ.</span>", duration: "1 tháng", price: "100.000đ" },
+                        { name: "SuperGrok Tài Khoản Cấp", desc: "Tài khoản do shop cấp. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Có thể đổi thông tin sang email chính chủ.</span>", duration: "2 tháng", price: "150.000đ" },
+                        { name: "SuperGrok Tài Khoản Cấp", desc: "Tài khoản do shop cấp. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Có thể đổi thông tin sang email chính chủ.</span>", duration: "3 tháng", price: "200.000đ" },
+                        { name: "SuperGrok Chính Chủ", desc: "Nâng cấp trực tiếp trên tài khoản X (Twitter) của bạn.", duration: "1 tháng", price: "250.000đ" },
+                        { name: "SuperGrok Chính Chủ", desc: "Nâng cấp trực tiếp trên tài khoản X (Twitter) của bạn.", duration: "2 tháng", price: "350.000đ" },
+                        { name: "SuperGrok Chính Chủ", desc: "Nâng cấp trực tiếp trên tài khoản X (Twitter) của bạn.", duration: "3 tháng", price: "400.000đ" }
+                    ],
+                    longTableData: [
+                        { name: "SuperGrok Thuê Theo Tháng", desc: "Phù hợp khách muốn dùng dài hạn nhưng trả tiền theo tháng. (Lưu ý: Không dùng nữa shop sẽ thu hồi tài khoản). <span class='text-red-500 dark:text-red-400 font-bold'>Không hỗ trợ đổi email chính chủ.</span>", duration: "1 tháng", price: "150.000đ" },
+                        { name: "SuperGrok Tài Khoản Cấp", desc: "Tài khoản do shop cấp. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Có thể đổi thông tin sang email chính chủ.</span>", duration: "6 tháng", price: "1.100.000đ" },
+                        { name: "SuperGrok Tài Khoản Cấp", desc: "Tài khoản do shop cấp. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Có thể đổi thông tin sang email chính chủ.</span>", duration: "1 năm", price: "2.000.000đ" },
+                        { name: "SuperGrok Tài Khoản Cấp", desc: "Tài khoản do shop cấp. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Có thể đổi thông tin sang email chính chủ.</span>", duration: "2 năm", price: "3.500.000đ" },
+                        { name: "SuperGrok Chính Chủ", desc: "Nâng cấp trực tiếp, sử dụng ổn định lâu dài trên tài khoản của bạn.", duration: "6 tháng", price: "1.250.000đ" },
+                        { name: "SuperGrok Chính Chủ", desc: "Nâng cấp trực tiếp, sử dụng ổn định lâu dài trên tài khoản của bạn.", duration: "1 năm", price: "2.250.000đ" }
                     ],
                     // DỮ LIỆU DẠNG CARD TƯƠNG TÁC
                     packages: [
                         {
-                            id: "supergrok",
-                            name: "SuperGrok Premium",
-                            desc: "Mở khóa sức mạnh của SuperGrok, truy cập thông tin và phân tích dữ liệu thời gian thực nhanh nhất thế giới.",
+                            id: "short_cap",
+                            name: "Ngắn hạn (Tài khoản cấp)",
+                            desc: "Sử dụng tài khoản do shop cung cấp.<br/><span class='text-emerald-600 dark:text-emerald-400 font-medium mt-1.5 inline-block'>Đặc biệt: Có thể đổi thông tin sang email chính chủ của bạn.</span>",
                             options: [
-                                { id: "1m", label: "1 tháng", price: "330.000đ" },
-                                { id: "1y_6m", label: "1 năm", subLabel: "Bảo hành 6T", price: "2.400.000đ" },
-                                { id: "1y_full", label: "1 năm", subLabel: "Bảo hành Full", price: "3.000.000đ" }
+                                { id: "1m", label: "1 tháng", price: "100.000đ" },
+                                { id: "2m", label: "2 tháng", price: "150.000đ" },
+                                { id: "3m", label: "3 tháng", price: "200.000đ" }
+                            ]
+                        },
+                        {
+                            id: "short_chinhchu",
+                            name: "Ngắn hạn (Chính chủ)",
+                            desc: "Nâng cấp trực tiếp trên tài khoản cá nhân của bạn để đảm bảo trải nghiệm nguyên vẹn mọi dữ liệu trên X (Twitter).",
+                            options: [
+                                { id: "1m", label: "1 tháng", price: "250.000đ" },
+                                { id: "2m", label: "2 tháng", price: "350.000đ" },
+                                { id: "3m", label: "3 tháng", price: "400.000đ" }
+                            ]
+                        },
+                        {
+                            id: "long_rent",
+                            name: "Thuê Theo Tháng (Tài khoản cấp)",
+                            desc: "Phù hợp khách muốn dùng dài hạn nhưng trả tiền theo tháng.<br/><span class='text-red-500 dark:text-red-400 font-medium mt-1.5 inline-block'>Lưu ý: Thu hồi tài khoản nếu ngừng gia hạn. Không hỗ trợ đổi sang email chính chủ.</span>",
+                            options: [
+                                { id: "1m_rent", label: "1 tháng", price: "150.000đ" }
+                            ]
+                        },
+                        {
+                            id: "long_cap",
+                            name: "Dài hạn (Tài khoản cấp)",
+                            desc: "Tài khoản cấp với mức giá ưu đãi cho thời gian sử dụng dài.<br/><span class='text-emerald-600 dark:text-emerald-400 font-medium mt-1.5 inline-block'>Có thể đổi thông tin sang email chính chủ.</span>",
+                            options: [
+                                { id: "6m", label: "6 tháng", price: "1.100.000đ" },
+                                { id: "1y", label: "1 năm", price: "2.000.000đ" },
+                                { id: "2y", label: "2 năm", price: "3.500.000đ" }
+                            ]
+                        },
+                        {
+                            id: "long_chinhchu",
+                            name: "Dài hạn (Chính chủ)",
+                            desc: "Nâng cấp chính chủ sử dụng ổn định lâu dài. Giải pháp hoàn hảo cho việc phân tích dữ liệu chuyên nghiệp.",
+                            options: [
+                                { id: "6m", label: "6 tháng", price: "1.250.000đ" },
+                                { id: "12m", label: "1 năm", price: "2.250.000đ" }
                             ]
                         }
                     ]
@@ -120,27 +169,76 @@
                 buyNow: "Buy Now",
                 pricing: {
                     title: "SuperGrok Pricing as of",
-                    subTitle: "Real-time data analysis AI assistant with superior power from xAI.",
+                    subTitle: "Real-time data analysis AI assistant powered by xAI (integrated on X/Twitter).",
                     viewTable: "Table View",
                     viewCard: "Card View",
-                    tableTitle: "SuperGrok Packages",
+                    shortTermTitle: "Short-term Packages",
+                    longTermTitle: "Long-term Packages",
+                    headers: ["Package", "Description", "Duration", "Price"],
                     // TABLE DATA
-                    headers: ["Package", "Warranty Details", "Duration", "Price"],
-                    tableData: [
-                        { name: "SuperGrok 1 Month", desc: "Experience full SuperGrok features for 1 month.", duration: "1 month", price: "330,000 VND" },
-                        { name: "SuperGrok 1 Year (6M Warranty)", desc: "1 year usage, with warranty support for the first 6 months.", duration: "1 year", price: "2,400,000 VND" },
-                        { name: "SuperGrok 1 Year (Full Warranty)", desc: "1 year usage, with 100% full-time warranty support.", duration: "1 year", price: "3,000,000 VND" }
+                    shortTableData: [
+                        { name: "SuperGrok Provided Account", desc: "Account provided by shop. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Can change details to personal email.</span>", duration: "1 month", price: "100,000 VND" },
+                        { name: "SuperGrok Provided Account", desc: "Account provided by shop. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Can change details to personal email.</span>", duration: "2 months", price: "150,000 VND" },
+                        { name: "SuperGrok Provided Account", desc: "Account provided by shop. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Can change details to personal email.</span>", duration: "3 months", price: "200,000 VND" },
+                        { name: "SuperGrok Official Upgrade", desc: "Directly upgraded on your X (Twitter) account.", duration: "1 month", price: "250,000 VND" },
+                        { name: "SuperGrok Official Upgrade", desc: "Directly upgraded on your X (Twitter) account.", duration: "2 months", price: "350,000 VND" },
+                        { name: "SuperGrok Official Upgrade", desc: "Directly upgraded on your X (Twitter) account.", duration: "3 months", price: "400,000 VND" }
+                    ],
+                    longTableData: [
+                        { name: "SuperGrok Monthly Rent", desc: "Suitable for long-term use but paying monthly. (Note: Shop will reclaim account if not renewed). <span class='text-red-500 dark:text-red-400 font-bold'>Cannot change to personal email.</span>", duration: "1 month", price: "150,000 VND" },
+                        { name: "SuperGrok Provided Account", desc: "Account provided by shop. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Can change details to personal email.</span>", duration: "6 months", price: "1,100,000 VND" },
+                        { name: "SuperGrok Provided Account", desc: "Account provided by shop. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Can change details to personal email.</span>", duration: "1 year", price: "2,000,000 VND" },
+                        { name: "SuperGrok Provided Account", desc: "Account provided by shop. <span class='text-emerald-600 dark:text-emerald-400 font-bold'>Can change details to personal email.</span>", duration: "2 years", price: "3,500,000 VND" },
+                        { name: "SuperGrok Official Upgrade", desc: "Stable official upgrade on your account for long term.", duration: "6 months", price: "1,250,000 VND" },
+                        { name: "SuperGrok Official Upgrade", desc: "Stable official upgrade on your account for long term.", duration: "1 year", price: "2,250,000 VND" }
                     ],
                     // CARD DATA
                     packages: [
                         {
-                            id: "supergrok",
-                            name: "SuperGrok Premium",
-                            desc: "Unlock the power of SuperGrok, access real-time information and data analysis faster than ever.",
+                            id: "short_cap",
+                            name: "Short-term (Provided Account)",
+                            desc: "Use an account provided by the shop.<br/><span class='text-emerald-600 dark:text-emerald-400 font-medium mt-1.5 inline-block'>Note: Information can be changed to your personal email.</span>",
                             options: [
-                                { id: "1m", label: "1 month", price: "330,000 VND" },
-                                { id: "1y_6m", label: "1 year", subLabel: "6M Warranty", price: "2,400,000 VND" },
-                                { id: "1y_full", label: "1 year", subLabel: "Full Warranty", price: "3,000,000 VND" }
+                                { id: "1m", label: "1 month", price: "100,000 VND" },
+                                { id: "2m", label: "2 months", price: "150,000 VND" },
+                                { id: "3m", label: "3 months", price: "200,000 VND" }
+                            ]
+                        },
+                        {
+                            id: "short_chinhchu",
+                            name: "Short-term (Official Account)",
+                            desc: "Directly upgraded on your personal X (Twitter) account ensuring your data and history remain intact.",
+                            options: [
+                                { id: "1m", label: "1 month", price: "250,000 VND" },
+                                { id: "2m", label: "2 months", price: "350,000 VND" },
+                                { id: "3m", label: "3 months", price: "400,000 VND" }
+                            ]
+                        },
+                        {
+                            id: "long_rent",
+                            name: "Monthly Rent (Provided Account)",
+                            desc: "Suitable for long-term use but paying monthly.<br/><span class='text-red-500 dark:text-red-400 font-medium mt-1.5 inline-block'>Note: Reclaimed if not renewed. Cannot change to personal email.</span>",
+                            options: [
+                                { id: "1m_rent", label: "1 month", price: "150,000 VND" }
+                            ]
+                        },
+                        {
+                            id: "long_cap",
+                            name: "Long-term (Provided Account)",
+                            desc: "Provided account at a discount for long-term use.<br/><span class='text-emerald-600 dark:text-emerald-400 font-medium mt-1.5 inline-block'>Information can be changed to personal email.</span>",
+                            options: [
+                                { id: "6m", label: "6 months", price: "1,100,000 VND" },
+                                { id: "1y", label: "1 year", price: "2,000,000 VND" },
+                                { id: "2y", label: "2 years", price: "3,500,000 VND" }
+                            ]
+                        },
+                        {
+                            id: "long_chinhchu",
+                            name: "Long-term (Official Account)",
+                            desc: "Stable official upgrade on your own account. The perfect solution for professional real-time data analysis.",
+                            options: [
+                                { id: "6m", label: "6 months", price: "1,250,000 VND" },
+                                { id: "12m", label: "1 year", price: "2,250,000 VND" }
                             ]
                         }
                     ]
@@ -210,12 +308,11 @@
                 </div>
             `;
 
-            // ===== HTML: DẠNG CARD (Tinh tế & Sang trọng) =====
+            // ===== HTML: DẠNG CARD =====
             const cardsHtml = pData.packages.map(pkg => {
                 const selectedOptionId = packageSelections[pkg.id] || pkg.options[0].id;
                 const selectedOption = pkg.options.find(o => o.id === selectedOptionId);
 
-                // Nút chọn Option dạng Segmented Control
                 const optionsHtml = pkg.options.map(opt => {
                     const isSelected = opt.id === selectedOptionId;
                     const btnClass = isSelected
@@ -226,35 +323,37 @@
                         ? `<span>${opt.label}</span><span class="block text-[10px] font-normal opacity-70 mt-0.5">${opt.subLabel}</span>`
                         : `<span>${opt.label}</span>`;
 
+                    const textClass = pkg.options.length > 3 ? "text-[12px] sm:text-sm" : "text-sm";
+
                     return `
                         <button onclick="selectOption('${pkg.id}', '${opt.id}')"
-                                class="flex-1 py-3 px-1 rounded-xl transition-all duration-300 text-sm leading-tight ${btnClass}">
+                                class="flex-1 py-3 px-1 rounded-xl transition-all duration-300 leading-tight ${textClass} ${btnClass}">
                             ${labelHtml}
                         </button>
                     `;
                 }).join('');
 
                 return `
-                    <div class="relative bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/60 dark:border-slate-700/50 p-7 sm:p-10 flex flex-col h-full hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 overflow-hidden group">
-                        <!-- Decorative Blob -->
+                    <div class="relative bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/60 dark:border-slate-700/50 p-7 flex flex-col h-full hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 overflow-hidden group">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-indigo-500/10 dark:from-blue-400/5 dark:to-indigo-500/5 rounded-bl-full -z-10 transition-transform duration-700 group-hover:scale-125"></div>
                         
                         <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="sparkles" class="text-blue-500 dark:text-blue-400 w-8 h-8"></i>
-                            <h3 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-blue-300 dark:to-indigo-300 tracking-tight">${pkg.name}</h3>
+                            <i data-lucide="rocket" class="text-blue-500 dark:text-blue-400 w-8 h-8"></i>
+                            <h3 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-blue-300 dark:to-indigo-300 tracking-tight">${pkg.name}</h3>
                         </div>
-                        <p class="text-slate-600 dark:text-slate-300/90 text-[15px] mb-8 leading-relaxed flex-grow">${pkg.desc}</p>
+                        <p class="text-slate-600 dark:text-slate-300/90 text-[14px] mb-8 leading-relaxed flex-grow">${pkg.desc}</p>
                         
-                        <div class="mt-auto space-y-8">
-                            <!-- Segmented Control Container -->
-                            <div class="bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-2xl flex gap-1 border border-slate-200/50 dark:border-slate-800/50">
-                                ${optionsHtml}
-                            </div>
+                        <div class="mt-auto space-y-7">
+                            ${pkg.options.length > 1 ? `
+                                <div class="bg-slate-100/80 dark:bg-slate-900/50 p-1.5 rounded-2xl flex gap-1 border border-slate-200/50 dark:border-slate-800/50">
+                                    ${optionsHtml}
+                                </div>
+                            ` : ''}
 
                             <div>
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="text-slate-500 dark:text-slate-400 text-sm font-medium flex items-center gap-1.5"><i data-lucide="tag" class="w-4 h-4"></i> Giá ưu đãi</span>
-                                    <span class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">${selectedOption.price}</span>
+                                    <span class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">${selectedOption.price}</span>
                                 </div>
                                 
                                 <a href="https://zalo.me/0816522665" target="_blank" rel="noreferrer"
@@ -268,21 +367,24 @@
             }).join('');
 
             // ===== HTML: DẠNG BẢNG =====
-            const tableRowsHtml = pData.tableData.map(pkg => `
-                <tr class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-blue-50/50 dark:hover:bg-blue-900/30 transition-colors group">
-                    <td class="px-5 py-5 font-bold text-blue-800 dark:text-blue-300 align-middle min-w-[200px] text-lg">${pkg.name}</td>
-                    <td class="px-5 py-5 text-gray-700 dark:text-gray-300 align-middle leading-relaxed min-w-[250px]">${pkg.desc}</td>
-                    <td class="px-5 py-5 text-center font-semibold text-gray-800 dark:text-gray-200 align-middle whitespace-nowrap text-lg">${pkg.duration}</td>
-                    <td class="px-5 py-5 text-center font-black text-blue-600 dark:text-blue-400 align-middle whitespace-nowrap text-xl bg-blue-50/30 dark:bg-blue-900/10">${pkg.price}</td>
-                </tr>
-            `).join('');
+            const renderTableRows = (dataArray) => {
+                return dataArray.map(pkg => `
+                    <tr class="border-b border-gray-100 dark:border-gray-700/50 hover:bg-blue-50/50 dark:hover:bg-blue-900/30 transition-colors group">
+                        <td class="px-5 py-5 font-bold text-blue-800 dark:text-blue-300 align-middle min-w-[200px] text-lg">${pkg.name}</td>
+                        <td class="px-5 py-5 text-gray-700 dark:text-gray-300 align-middle leading-relaxed min-w-[250px]">${pkg.desc}</td>
+                        <td class="px-5 py-5 text-center font-semibold text-gray-800 dark:text-gray-200 align-middle whitespace-nowrap text-lg">${pkg.duration}</td>
+                        <td class="px-5 py-5 text-center font-black text-blue-600 dark:text-blue-400 align-middle whitespace-nowrap text-xl bg-blue-50/30 dark:bg-blue-900/10">${pkg.price}</td>
+                    </tr>
+                `).join('');
+            };
 
             const tableLayoutHtml = `
+                <!-- Bảng Dùng Ngắn Hạn -->
                 <div class="bg-white/95 dark:bg-gray-800/85 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden mb-12 border border-gray-100 dark:border-gray-700/50">
                     <div class="bg-blue-800 dark:bg-blue-900 px-6 py-5 border-b border-blue-900/50 dark:border-blue-950">
                         <div class="flex items-center gap-3">
-                            <i data-lucide="sparkles" class="text-blue-300 w-6 h-6"></i>
-                            <h2 class="text-xl font-extrabold text-white uppercase tracking-wider">${pData.tableTitle}</h2>
+                            <i data-lucide="clock" class="text-blue-300 w-6 h-6"></i>
+                            <h2 class="text-xl font-extrabold text-white uppercase tracking-wider">${pData.shortTermTitle}</h2>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
@@ -292,7 +394,27 @@
                                     ${pData.headers.map((h, index) => `<th class="px-5 py-4 font-bold uppercase text-sm tracking-wide ${index >= 2 ? 'text-center' : ''}">${h}</th>`).join('')}
                                 </tr>
                             </thead>
-                            <tbody>${tableRowsHtml}</tbody>
+                            <tbody>${renderTableRows(pData.shortTableData)}</tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bảng Dùng Dài Hạn -->
+                <div class="bg-white/95 dark:bg-gray-800/85 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden mb-12 border border-gray-100 dark:border-gray-700/50">
+                    <div class="bg-indigo-800 dark:bg-indigo-900 px-6 py-5 border-b border-indigo-900/50 dark:border-indigo-950">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="calendar-days" class="text-indigo-300 w-6 h-6"></i>
+                            <h2 class="text-xl font-extrabold text-white uppercase tracking-wider">${pData.longTermTitle}</h2>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="bg-indigo-50/50 dark:bg-gray-900/50 text-indigo-900 dark:text-indigo-200 border-b-2 border-indigo-100 dark:border-gray-700">
+                                    ${pData.headers.map((h, index) => `<th class="px-5 py-4 font-bold uppercase text-sm tracking-wide ${index >= 2 ? 'text-center' : ''}">${h}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>${renderTableRows(pData.longTableData)}</tbody>
                         </table>
                     </div>
                 </div>
@@ -360,12 +482,12 @@
                     </nav>
 
                     <!-- Main Pricing Content -->
-                    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
+                    <main class="flex-grow w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 relative z-10">
                         <div class="text-center mb-10">
                             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-blue-950 dark:text-white mb-4 drop-shadow-sm leading-tight">
                                 ${pData.title} <span class="text-blue-600 dark:text-blue-400 border-b-4 border-blue-500 rounded-sm inline-block mt-2 sm:mt-0 pb-1">${dateStr}</span>
                             </h1>
-                            <p class="mt-4 text-lg text-emerald-600 dark:text-emerald-400 max-w-2xl mx-auto font-bold tracking-wide">
+                            <p class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-medium tracking-wide">
                                 ${pData.subTitle}
                             </p>
                         </div>
@@ -374,8 +496,8 @@
 
                         <!-- Content Render based on viewMode -->
                         ${viewMode === 'card' 
-                            ? `<div class="max-w-lg mx-auto">${cardsHtml}</div>`
-                            : tableLayoutHtml
+                            ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">${cardsHtml}</div>`
+                            : `<div class="max-w-5xl mx-auto">${tableLayoutHtml}</div>`
                         }
 
                     </main>
